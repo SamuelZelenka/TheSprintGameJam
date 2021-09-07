@@ -6,6 +6,7 @@ using UnityEngine.Events;
 
 public class CountDownStart : MonoBehaviour
 {
+    public bool IsCounting { get; set; }
     public float countDown = 3;
     public Text countDownText;
 
@@ -21,12 +22,15 @@ public class CountDownStart : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        countDown -= Time.deltaTime;
-        countDownText.text = Mathf.RoundToInt(countDown).ToString();
-
-        if (countDown<= 0)
+        if (IsCounting)
         {
-            OnCountDownEnd.Invoke();
+            countDown -= Time.deltaTime;
+            countDownText.text = Mathf.RoundToInt(countDown).ToString();
+
+            if (countDown <= 0)
+            {
+                OnCountDownEnd.Invoke();
+            }
         }
     }
 

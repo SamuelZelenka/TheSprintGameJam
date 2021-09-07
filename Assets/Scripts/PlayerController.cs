@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     float maxTime = 10;
     public float distanceTraveled;
     public bool hasStarted = false;
+    string playerName;
 
     KeyCode keyPressed;
     [SerializeField] private float _force = 10;
@@ -21,6 +22,8 @@ public class PlayerController : MonoBehaviour
     public Text highScoreText;
 
     public UnityEvent OnRestart;
+
+    public InputField inputfield;
 
     [SerializeField] private Vector2 direction = new Vector2(1,1);
 
@@ -33,7 +36,7 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        if (hasStarted)
+        if (hasStarted && name != "")
         {
             timer += Time.deltaTime;
 
@@ -71,7 +74,10 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
-
+    public void SetName()
+    {
+        playerName = inputfield.text;
+    }
     public void StartGame()
     {
         hasStarted = true;
@@ -83,9 +89,10 @@ public class PlayerController : MonoBehaviour
     }
     public void RestartGame()
     {
-         transform.position = startPos;
-         timer = 0;
-         distanceTraveled = 0;
+        transform.position = startPos;
+        transform.rotation = Quaternion.identity;
+        timer = 0;
+        distanceTraveled = 0;
         keyPressed = KeyCode.None;
         hasStarted = false;
         highScoreBody.SetActive(false);
@@ -96,6 +103,7 @@ public class PlayerController : MonoBehaviour
         if (tempScore > PlayerPrefs.GetFloat("HighScore"))
         {
             PlayerPrefs.SetFloat("HighScore", tempScore);
+            DiscordMessageSender.UploadMessage(PlayerPrefs.GetFloat("HighScore").ToString(), playerName);
         }
     }
     public void ShowHighscore()
