@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
 
 public class PlayerController : MonoBehaviour
 {
@@ -9,7 +10,7 @@ public class PlayerController : MonoBehaviour
     float timer = 0;
     float maxTime = 10;
     public float distanceTraveled;
-    bool _hasStarted = false;
+    public bool hasStarted = false;
 
     KeyCode keyPressed;
     [SerializeField] private float _force = 10;
@@ -19,6 +20,7 @@ public class PlayerController : MonoBehaviour
     public Text scoreText;
     public Text highScoreText;
 
+    public UnityEvent OnRestart;
 
     [SerializeField] private Vector2 direction = new Vector2(1,1);
 
@@ -31,43 +33,48 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        if (_hasStarted)
+        if (hasStarted)
         {
             timer += Time.deltaTime;
-        }
-        
-        if (timer >= maxTime)
-        {
-            if (rigidBody.velocity.x < 0.01f)
+
+
+            if (timer >= maxTime)
             {
-                ShowHighscore();
-            }
-        }
-        else
-        {
-            if (keyPressed == KeyCode.None)
-            {
-                if (Input.GetKeyDown(KeyCode.A))
+                if (rigidBody.velocity.x < 0.01f)
                 {
+                    ShowHighscore();
+                }
+            }
+            else
+            {
+                if (keyPressed == KeyCode.None)
+                {
+                    if (Input.GetKeyDown(KeyCode.A))
+                    {
+                        keyPressed = KeyCode.A;
+                    }
+                    if (Input.GetKeyDown(KeyCode.D))
+                    {
+                        keyPressed = KeyCode.D;
+                    }
+                }
+                if (Input.GetKeyDown(KeyCode.A) && keyPressed != KeyCode.A)
+                {
+                    AddForce();
                     keyPressed = KeyCode.A;
                 }
-                if (Input.GetKeyDown(KeyCode.D))
+                else if (Input.GetKeyDown(KeyCode.D) && keyPressed != KeyCode.D)
                 {
+                    AddForce();
                     keyPressed = KeyCode.D;
                 }
-                _hasStarted = true;
-            }
-            if (Input.GetKeyDown(KeyCode.A) && keyPressed != KeyCode.A)
-            {
-                AddForce();
-                keyPressed = KeyCode.A;
-            }
-            else if (Input.GetKeyDown(KeyCode.D) && keyPressed != KeyCode.D)
-            {
-                AddForce();
-                keyPressed = KeyCode.D;
             }
         }
+    }
+
+    public void StartGame()
+    {
+        hasStarted = true;
     }
 
     public void AddForce()
@@ -80,8 +87,9 @@ public class PlayerController : MonoBehaviour
          timer = 0;
          distanceTraveled = 0;
         keyPressed = KeyCode.None;
-        _hasStarted = false;
+        hasStarted = false;
         highScoreBody.SetActive(false);
+        OnRestart.Invoke();
     }
     public void SetHighScore(float tempScore)
     {
