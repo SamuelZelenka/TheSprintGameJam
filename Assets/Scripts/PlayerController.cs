@@ -6,7 +6,8 @@ using UnityEngine.UI;
 public class PlayerController : MonoBehaviour
 {
     Vector3 startPos;
-    float startTime = 0;
+    float timer = 0;
+    float maxTime = 10;
     public float distanceTraveled;
     bool _hasStarted = false;
 
@@ -16,6 +17,7 @@ public class PlayerController : MonoBehaviour
 
     public GameObject highScoreBody;
     public Text scoreText;
+    public Text highScoreText;
 
 
     [SerializeField] private Vector2 direction = new Vector2(1,1);
@@ -31,10 +33,10 @@ public class PlayerController : MonoBehaviour
     {
         if (_hasStarted)
         {
-            startTime += Time.deltaTime;
+            timer += Time.deltaTime;
         }
         
-        if (startTime >= 10)
+        if (timer >= maxTime)
         {
             if (rigidBody.velocity.x < 0.01f)
             {
@@ -75,15 +77,26 @@ public class PlayerController : MonoBehaviour
     public void RestartGame()
     {
          transform.position = startPos;
-         startTime = 0;
+         timer = 0;
          distanceTraveled = 0;
+        keyPressed = KeyCode.None;
         _hasStarted = false;
         highScoreBody.SetActive(false);
     }
+    public void SetHighScore(float tempScore)
+    {
+        if (tempScore > PlayerPrefs.GetFloat("HighScore"))
+        {
+            PlayerPrefs.SetFloat("HighScore", tempScore);
+        }
+    }
     public void ShowHighscore()
     {
+        distanceTraveled = Vector3.Distance(startPos, transform.position);
+        SetHighScore(distanceTraveled);
         highScoreBody.SetActive(true);
-        scoreText.text = Vector3.Distance(startPos, transform.position).ToString(); 
+        scoreText.text = distanceTraveled.ToString();
+        highScoreText.text = $"Highscore {PlayerPrefs.GetFloat("HighScore")}";
     }
 
     private void OnDrawGizmos()
