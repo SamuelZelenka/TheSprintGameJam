@@ -9,7 +9,7 @@ public class PlayerController : MonoBehaviour
     Vector3 startPos;
     float timer = 0;
     float maxTime = 10;
-    public float distanceTraveled;
+    float distanceTraveled;
     public bool hasStarted = false;
     string playerName;
 
@@ -107,7 +107,7 @@ public class PlayerController : MonoBehaviour
         if (tempScore > PlayerPrefs.GetFloat("HighScore"))
         {
             PlayerPrefs.SetFloat("HighScore", tempScore);
-            DiscordMessageSender.UploadMessage(PlayerPrefs.GetFloat("HighScore").ToString(), playerName);
+            DiscordMessageSender.UploadMessage(tempScore.ToString(), playerName);
         }
     }
     public void ShowHighscore()
