@@ -99,6 +99,7 @@ public class PlayerController : MonoBehaviour
         keyPressed = KeyCode.None;
         hasStarted = false;
         highScoreBody.SetActive(false);
+        rigidBody.bodyType = RigidbodyType2D.Dynamic;
         OnRestart.Invoke();
     }
     public void SetHighScore(float tempScore)
@@ -111,7 +112,7 @@ public class PlayerController : MonoBehaviour
     }
     public void ShowHighscore()
     {
-        rigidBody.velocity = Vector2.zero;
+        rigidBody.bodyType = RigidbodyType2D.Static;
         distanceTraveled = Vector3.Distance(startPos, transform.position);
         SetHighScore(distanceTraveled);
         highScoreBody.SetActive(true);
