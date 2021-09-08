@@ -25,6 +25,7 @@ public class PlayerController : MonoBehaviour
 
     public InputField inputfield;
 
+    [SerializeField] private Vector2 addedForce = new Vector2(); 
     [SerializeField] private Vector2 direction = new Vector2(1,1);
 
     // Update is called once per frame
@@ -63,16 +64,22 @@ public class PlayerController : MonoBehaviour
                 }
                 if (Input.GetKeyDown(KeyCode.A) && keyPressed != KeyCode.A)
                 {
-                    AddForce();
+                    addedForce = direction * _force;
                     keyPressed = KeyCode.A;
                 }
                 else if (Input.GetKeyDown(KeyCode.D) && keyPressed != KeyCode.D)
                 {
-                    AddForce();
+                    addedForce = direction * _force;
                     keyPressed = KeyCode.D;
                 }
             }
         }
+    }
+
+    private void FixedUpdate()
+    {
+        rigidBody.AddForce(addedForce, ForceMode2D.Impulse);
+        addedForce = Vector2.zero;
     }
     public void SetName()
     {
@@ -83,10 +90,6 @@ public class PlayerController : MonoBehaviour
         hasStarted = true;
     }
 
-    public void AddForce()
-    {
-        rigidBody.AddForce(direction.normalized * _force * Time.deltaTime, ForceMode2D.Impulse);
-    }
     public void RestartGame()
     {
         transform.position = startPos;
@@ -108,6 +111,7 @@ public class PlayerController : MonoBehaviour
     }
     public void ShowHighscore()
     {
+        rigidBody.velocity = Vector2.zero;
         distanceTraveled = Vector3.Distance(startPos, transform.position);
         SetHighScore(distanceTraveled);
         highScoreBody.SetActive(true);
